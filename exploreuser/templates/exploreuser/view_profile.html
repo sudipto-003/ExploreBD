@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Home page</title>
+</head>
+<body>
+	<p>{{ user.username }}</p>
+	<p>{{ u.email }}</p>
+	<p>{{ u.full_name }}</p> 
+	<p>{{ u.date_of_birth }}</p>
+
+	<p>{{ request.user.profile.about }}</p>
+	
+	{% if u.profile.photo %}
+	<img src="{{ user.profile.photo.url }}" alt="Profile Picture">
+	{% endif %}
+	<a href="{% url 'edit_profile' user.id %}">Edit Profile</a>
+</body>

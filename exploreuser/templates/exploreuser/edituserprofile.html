@@ -1,0 +1,68 @@
+{% extends 'exploreuser/base.html' %}
+
+{% block title %}
+<title>{{ user.username }}: Profile Update</title>
+{% endblock %}
+
+{% block content %}
+{% load widget_tweaks %}
+<div class="container">
+	<div class="row mx-2 my-2 p-3">
+		<div class="col mr-auto">
+			<form method="POST" enctype="multipart/form-data">
+				{% csrf_token %}
+				{% if form.non_field_error %}
+				<div class="row mx-2 my-3 p-2">
+					<div class="col-12">
+						<div class="alert alert-danger" role="alert">
+							{% for error in form.non_field_errors %}
+								{{ error }}
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+				{% endif %}
+
+				{% for field in form %}
+				<div class="form-group">
+					{% if field.name == 'photo' %}
+						<div class="row">
+							<div class="col-lg-2"></div>
+							<div class="col-lg-3 col-sm-6 mr-auto mx-2 my-2 p-3">
+								<h4 class="text-left">Profile Picture</h4>
+								{% if user.profile.photo %}
+
+									<img src="{{ user.profile.photo.url }}" alt="User Profile Photo" class="img-thumbnail" width="200" height="200">
+								{% else %}
+									{% load static %}
+									<img src="{% static 'exploreuser/allprofile.jpeg' %}" alt="User Profile Photo" class="img-thumbnail" width="200" height="200">
+								{% endif %}
+								
+								{% render_field field class="form-control-file" %}
+
+								{% if field.help_text %}
+									<small class="text-muted">{{ field.help_text|safe }}</small>
+								{% endif %}
+							</div>
+							<div class="col-lg-7"></div>
+
+					{% else %}
+						{{ field.label_tag }}
+
+						{% render_field field class="form-control" %}
+
+						{% if field.help_text %}
+							<small class="text-muted">{{ field.help_text|safe }}</small>
+						{% endif %}
+					{% endif %}
+				</div>
+				{% endfor %}
+				<div class="row">
+					<button type="submit" class="btn btn-success btn-lg ml-auto my-3">Save</button>
+				</div>
+			</form>
+		</div>
+				
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'exploreuser/base.html' %}
+
+{% block title %}
+<title>Login</title>
+{% endblock %}
+
+{% block content %}
+{% load widget_tweaks %}
+<div class="container mx-auto py-5 border-1">
+	<div class="row">
+		<div class="col-lg-2"></div>
+		<div class="col-lg-6 col-sm-12 mr-auto py-4">
+			{% include 'exploreuser/component/imagenav.html' %}
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-2"></div>
+		<div class="col-lg-6 col-sm-12 mr-auto my-5 mx-3 py-3">
+			<form method="POST" novalidate>
+				{% csrf_token %}
+
+				{% if messages %}
+					{% for msg in messages %}
+						<div class="alert alert-danger" role="alert">
+							{{ msg|safe }}
+						</div>
+					{% endfor %}
+				{% endif %}
+
+				{% for field in form %}
+					<div class="form-group my-3">
+						{{ field.label_tag }}
+
+						{% render_field field class="form-control" %}
+
+						{% if field.help_text %}
+							<small class="text-muted">{{ field.help_text|safe }}</small>
+						{% endif %}
+					</div>
+				{% endfor %}
+				
+				<button type="submit" class="btn btn-primary btn-lg mx-auto my-3">Login</button>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
