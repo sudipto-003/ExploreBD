@@ -106,5 +106,35 @@ def edit_profile(request, pk):
 def view_profile(request, pk):
 	user = ExUser.objects.get(pk=pk)
 	posts = Post.objects.filter(user__username=user.username)
+	following = user.profile.follows.all().count()
+	followers = user.profile.followers.all().count()
 
-	return render(request, 'exploreuser/viewuserprofile.html', {'u': user, 'userposts': posts})
+	return render(request, 'exploreuser/viewuserprofile.html', {'u': user, 'userposts': posts, 
+			'following': following, 'followers': followers})
+
+
+@login_required(login_url='/users/login')
+def start_following(request, following_id):
+	follwer = Profile.objects.get(user__id=request.user.id)
+	following = Profile.objects.get(user__id=following_id)
+
+	follwer.follows.add(following)
+
+	return redirect(reverse('view_profile', kwargs={'pk': following.user.id}))
+
+
+@login_required(login_url='/users/login')
+def user_following(request, pk):
+	u = ExUser.objects.get(pk=pk)
+	following = u.profile.follows.all()
+
+	return render(request, 'exploreuser/userfollowinglist.html', {'following': following, 'u': u})
+
+
+
+@login_required(login_url='/users/login')
+def user_followers(request, pk):
+	u = ExUser.objects.get(pk=pk)
+	followers = u.profile.followers.all()
+
+	return render(request, 'exploreuser/userfollowerslist.html', {'followers': followers, 'u': u})

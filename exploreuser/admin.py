@@ -6,7 +6,7 @@ from django.contrib.auth.admin import UserAdmin
 from .forms import ExUserCreationForm, ExUserChangeForm
 from .models import ExUser, Profile
 
-class ProfileInline(admin.TabularInline):
+class ProfileInline(admin.StackedInline):
 	model = Profile
 
 

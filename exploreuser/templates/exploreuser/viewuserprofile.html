@@ -47,7 +47,23 @@
 				
 				<div class="card-body">
 				    <h5 class="card-title white-text">@{{ u.username }}</h5>
-				    <a href="{% url 'edit_profile' u.id %}" class="btn btn-success">Edit Profile</a>
+				    {% if user.id == u.id %}
+				    <a href="{% url 'edit_profile' user.id %}" class="btn btn-success">Edit Profile</a>
+				    {% else %}
+				    <a href="{% url 'start_following' u.id %}" class="btn btn-success">Follow</a>
+				    {% endif %}
+				    
+					<div class="row">
+						<div class="col-4 mr-auto">	
+							<h2 class="text-info text-center">{{ following }}</h2>
+							<a href="{% url 'user_following' u.id %}" class="btn btn-outline-info">Following</a>
+						</div>
+						<div class="col-4 ml-auto">
+							<h2 class="text-center text-info">{{ followers }}</h2>
+							<a href="{% url 'user_followers' u.id %}" class="btn btn-outline-info">Followers</a>
+						</div>
+					</div>
+
 				</div>
 			</div>
 		</div>

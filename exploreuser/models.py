@@ -38,6 +38,7 @@ class Profile(models.Model):
 	phone = models.CharField(max_length=12, default='', blank=True)
 	address = models.CharField(max_length=50, default='', blank=True)
 	photo = models.ImageField(upload_to=profile_img_path, null=True, blank=True)
+	follows = models.ManyToManyField('self', related_name='followers', symmetrical=False)
 
 	def save(self, *args, **kwargs):
 		if self.photo:
