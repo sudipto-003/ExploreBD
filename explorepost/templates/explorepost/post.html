@@ -1,19 +1,106 @@
-<form method="post" enctype="multipart/form-data">
+{% extends 'explorepost/base.html' %}
 
-    {% csrf_token %}
-    {% for hidden in postForm.hidden_fields %}
-        {{ hidden }}
-    {% endfor %}
+{% block title %}
+    <title>Post</title>
+    <style type="text/css">
+        .bl-bg{
+            background-color: rgb(0, 0, 0, 1);
+        }
+        .white-text{
+            color: rgb(255, 255, 255, 1);
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+{% endblock %}
 
-    {{ hashtags }}
+{% block content %}
+{% include 'explorepost/components/navbar.html' %}
+<div class="container-fluid bl-bg">
+    <div class="row mx-2 p-3">
 
-    {{ postform.as_p }}
+        <form method="post" enctype="multipart/form-data">
 
-    {{ formset.management_form }}
-    {% for form in formset %}
-        {{ form.as_p }}
-    {% endfor %}
+            {% csrf_token %}
+            {% for hidden in postForm.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
 
+            <div class="row">
+                <div class="col-2">
+                    <div class="card w-100 p-1 bl-bg mr-auto">
+                    {% if user.profile.photo %}
+                        <img src="{{ user.profile.photo.url }}" alt="User Profile Photo" class="card-img-top rounded" width="200" height="200">
+                    {% else %}
+                    {% load static %}
+                        <img src="{% static 'exploreuser/allprofile.jpeg' %}"  class="card-img-top">
+                    {% endif %}
 
-    <input type="submit" name="submit" value="Submit" />
-</form>
+                        <div class="card-body">
+                            <h5 class="card-title white-text">@{{ user.username }}</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-10">
+
+                    <div class="form-group white-text">
+                        {{ hashtags }}
+                    
+
+                        {{ postform.as_p }}
+
+                    </div>
+
+                    <h4 class="white-text">Post Images</h4>
+
+                    <div class="form-row white-text">
+
+                        {{ formset.management_form }}
+                        {% for form in formset %}
+                            
+                            <div class="p form-group col-3">
+                                {{ form.as_p }}
+                            </div>
+                            
+                        {% endfor %}
+
+                        <div class="col-2">
+                        <button type="button" class="btn btn-success btn-sm" value="Add More" id="add_more">Add More Images</button>
+                            <script type="text/javascript">
+                                $('#add_more').click(function(){
+                                    cloneMore('div.p:last', 'form');
+                                });
+                            </script>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        function cloneMore(selector, type){
+            var newElement = $(selector).clone(true);
+            var total = $('#id_'+type+'-TOTAL_FORMS').val();
+
+            newElement.find(':input').each(function(){
+                var name = $(this).attr('name').replace('-'+(total-1)+'-', '-'+total+'-');
+                var id = 'id_'+name
+                $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+            });
+
+            newElement.find('label').each(function(){
+                var newFor = $(this).attr('for').replace('-'+(total-1)+'-', '-'+total+'-');
+                $(this).attr('for', newFor);
+            });
+            total++;
+            $('#id_'+type+'-TOTAL_FORMS').val(total);
+            $(selector).after(newElement);
+        }
+    </script>
+{% endblock %}

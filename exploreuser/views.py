@@ -3,6 +3,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import View
 from .forms import *
 from .models import ExUser, Profile
+from explorepost.models import Post
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -104,8 +105,6 @@ def edit_profile(request, pk):
 @login_required(login_url='/users/login')
 def view_profile(request, pk):
 	user = ExUser.objects.get(pk=pk)
+	posts = Post.objects.filter(user__username=user.username)
 
-	return render(request, 'exploreuser/viewuserprofile.html', {'u': user})
-
-
-
+	return render(request, 'exploreuser/viewuserprofile.html', {'u': user, 'userposts': posts})

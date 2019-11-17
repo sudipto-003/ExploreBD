@@ -2,21 +2,41 @@
 
 {% block title %}
 <title>Login</title>
+<style type="text/css">
+	.banner{
+		background-color: rgb(50, 50, 50, .5);
+		z-index: 10;
+	}
+	.img-banner{
+		background-image: url(/static/exploreuser/sundarban.jpg);
+		background-size: cover;
+		background-position: center center;
+		z-index: 2; 
+	}
+	.white-text{
+		color: rgb(255, 255, 255, 1);
+	}
+</style>
 {% endblock %}
 
 {% block content %}
 {% load widget_tweaks %}
-<div class="container mx-auto py-5 border-1">
-	<div class="row">
-		<div class="col-lg-2"></div>
-		<div class="col-lg-6 col-sm-12 mr-auto py-4">
-			{% include 'exploreuser/component/imagenav.html' %}
+<div class="container-fluid img-banner mx-auto py-5 border-1">
+	<div class="row px-2">
+		<div class="col-lg-3"></div>
+		<div class="col-lg-6 col-sm-12 mr-auto py-2">
 		</div>
 	</div>
 
-	<div class="row">
-		<div class="col-lg-2"></div>
-		<div class="col-lg-6 col-sm-12 mr-auto my-5 mx-3 py-3">
+	<div class="row px-2">
+		<div class="col-lg-3"></div>
+		<div class="col-lg-6 col-sm-12 banner mr-auto my-5 px-3 py-3">
+			<h3 class="white-text text-center">User Login</h3>
+			<blockquote class="blockquote mb-0">
+				<p class="white-text text-center font-italic">Once a year, go someplace you've never been before.</p>
+				<footer class="blockquote-footer white-text text-right"><cite title="Dalai Lama">Dalai Lama</cite></footer>
+			</blockquote>
+
 			<form method="POST" novalidate>
 				{% csrf_token %}
 
@@ -29,8 +49,10 @@
 				{% endif %}
 
 				{% for field in form %}
-					<div class="form-group my-3">
-						{{ field.label_tag }}
+					<div class="form-group my-3 px-4">
+						<div class="white-text">
+							{{ field.label_tag }}
+						</div>
 
 						{% render_field field class="form-control" %}
 
@@ -39,8 +61,12 @@
 						{% endif %}
 					</div>
 				{% endfor %}
-				
-				<button type="submit" class="btn btn-primary btn-lg mx-auto my-3">Login</button>
+				<div class="form-group px-4">
+					<button type="submit" class="btn btn-primary btn-lg mx-auto text-center my-3">Login</button>
+				</div>
+				<div class="white-text text-right">
+					Don't have an account then <a class="btn btn-success btn-sm" href="{% url 'signup' %}" role="button">Signup</a> here.
+				</div>
 			</form>
 		</div>
 	</div>

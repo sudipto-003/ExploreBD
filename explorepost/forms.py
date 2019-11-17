@@ -6,13 +6,42 @@ class PostForm(forms.ModelForm):
 	class Meta:
 		model = Post
 		fields = ['title', 'describtion', ]
+		widgets = {
+			'title' : forms.TextInput(
+				attrs={
+					'class' : 'form-control'
+				}
+			),
+			'describtion' : forms.Textarea(
+				attrs={
+					'class' : 'form-control'
+				}
+			),
+		}
 
 
 class PostImageForm(forms.ModelForm):
 	class Meta:
 		model = PostImages
 		fields = ['image', ]
+		widgets = {
+			'image' : forms.FileInput(
+				attrs={
+					'class' : 'form-control-file'
+				}
+			),
+		}
 
 
-class HashtagField(forms.Form):
-	hashtag = forms.CharField(max_length=50)
+class HashtagField(forms.ModelForm):
+
+	class Meta:
+		model = Hashtags
+		fields = ['tag', ]
+		widgets = {
+			'tag' : forms.TextInput(
+				attrs={
+					'class' : 'form-control'
+				}
+			),
+		}

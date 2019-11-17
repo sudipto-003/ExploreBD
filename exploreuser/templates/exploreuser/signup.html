@@ -2,16 +2,31 @@
 
 {% block title %}
 <title>Sign Up</title>
+<style type="text/css">
+	.dark-bg{
+		background-color: rgb(10, 10, 0, 1);
+	}
+	.banner{
+		background-color: rgb(250, 250, 250, 0);
+	}
+	.lbl-col{
+		color: rgb(0, 250, 250, .7);
+	}
+	.white-text{
+		color: rgb(255, 255, 255, 1);
+	}
+</style>
 {% endblock %}
 
 {% block content %}
 {% load widget_tweaks %}
 
-<div class="container">
-	<div class="row my-2 mx-2 p-3">
+<div class="container-fluid dark-bg">
+	<div class="row mx-2 p-3">
 		<div class="col-lg-2"></div>
 
-		<div class="col-lg-8 col-sm-12 mr-auto">
+		<div class="col-lg-8 col-sm-12 banner mr-auto">
+			<h3 class="lbl-col text-center">Create New Account</h3>
 			<form method="POST" novalidate>
 				{% csrf_token %}
 				{% if form.non_field_errors %}
@@ -29,7 +44,9 @@
 
 				{% for field in form %}
 					<div class="form-group">
-						{{ field.label_tag }}
+						<div class="lbl-col">
+							{{ field.label_tag }}
+						</div>
 
 						{% if form.is_bound %}
 							{% if field.errors %}
@@ -54,7 +71,10 @@
 					</div>
 				{% endfor %}
 				
-				<button type="submit" class="btn btn-primary btn-lg btn-block">Sign Up</button>
+				<button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
+				<div class="white-text text-right">
+					Already have an account then <a class="btn btn-success btn-sm" href="{% url 'login' %}" role="button">Login</a> here.
+				</div>
 			</form>
 		</div>
 	</div>

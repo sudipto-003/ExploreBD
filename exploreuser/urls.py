@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from .views import *
 
 
@@ -9,4 +9,5 @@ urlpatterns = [
 	path('logout/', LogoutView.as_view(), name='logout'),
 	path('<int:pk>/profile/', view_profile, name='view_profile'),
 	path('<int:pk>/profile/edit/', edit_profile, name='edit_profile'),
+	path('posts/', include('explorepost.urls')),
 ]

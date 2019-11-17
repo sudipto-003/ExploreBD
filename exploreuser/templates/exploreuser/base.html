@@ -1,12 +1,68 @@
 <!doctype html>
 <html lang="en">
   <head>
+    {% load static %}
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+      .slide1, .slide2, .slide3 {
+        min-height: 600px;
+    background-size: cover;
+    background-position: center center;
+    opacity: 1;
+    z-index: 2;
+}
+.slide1 {
+    background-image: url(/static/exploreuser/sajek.jpg);
+}
+.slide2 {
+    background-image: url(/static/exploreuser/sylhet.jpg);
+}
+.slide3 {
+    background-image: url(/static/exploreuser/saintmartin.jpg);
+}
+/* Carousel Fade Effect */
+.carousel.carousel-fade .carousel-item {
+    -webkit-transition: opacity 1s linear;
+    -moz-transition: opacity 1s linear;
+    -ms-transition: opacity 1s linear;
+    -o-transition: opacity 1s linear;
+    transition: opacity 1s linear;
+    opacity: 1;
+}
+.carousel.carousel-fade .active .carousel-item {
+    opacity: 0;
+}
+.carousel.carousel-fade .active.left,
+.carousel.carousel-fade .active.right {
+    left: 0;
+    z-index: 2;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+.carousel-overlay {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    left: 0;
+    opacity: 1;
+    z-index: 10;
+    
+}
+.abc{
+    background-color: rgb(50, 50, 50, .5);
+    
+}
+
+.white-text{
+    color: rgb(255, 255, 255, 1);
+}
+
+    </style>
 
     {% block title %}
     {% endblock %}
@@ -15,7 +71,8 @@
 
     {% block content %}
     {% endblock %}
-  
+    
+    
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
