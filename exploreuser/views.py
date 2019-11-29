@@ -3,13 +3,14 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import View
 from .forms import *
 from .models import ExUser, Profile
-from explorepost.models import Post
+from explorepost.models import Post, Hashtags
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
+from django.db.models import Q
 
 # Create your views here.
 class SignUpView(View):
@@ -160,3 +161,37 @@ def user_timeline(request):
 	rec_posts = Post.objects.filter(user__id__in=user_follows).order_by('-timestamp')
 
 	return render(request, 'exploreuser/timeline.html', {'posts': rec_posts})
+
+
+def search(request):
+	s = request.GET.get('search', None)
+	mood = 'general'
+
+	if s is not None:
+		if s[0] == '#':
+			s = s[1:]
+			htags = Hashtags.objects.filter(tag__icontains=s)
+			posts = Post.objects.filter(hashtags__in=htags)
+			mood = 'tag'
+			users = None
+
+		elif s[0] == '@':
+			s = s[1:]
+			try:
+				user_r = ExUser.objects.get(username=s)
+			except ExUser.DoesNotExist:
+				messages.error(request, 'There is no user with username @{}'.format(s))
+				return redirect(reverse('home'))
+
+
+			return redirect(reverse('view_profile', kwargs={'pk': user_r.id}))
+
+		else:
+			users = ExUser.objects.filter(Q(username__icontains=s) | Q(first_name__icontains=s) | Q(last_name__icontains=s))
+			posts = Post.objects.filter(title__icontains=s)
+			htags = Hashtags.objects.filter(tag__icontains=s)
+			posts_h = Post.objects.filter(hashtags__in=htags)
+			posts = posts.union(posts_h)
+
+	return render(request, 'exploreuser/searchresult.html', {'users': users, 'posts': posts, 'mood': mood})
+

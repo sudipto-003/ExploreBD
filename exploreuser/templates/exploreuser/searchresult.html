@@ -1,0 +1,31 @@
+<html>
+<head>
+	<title>Search Reult</title>
+</head>
+
+<body>
+	{% if mood == 'general' %}
+		<h4> Users </h4>
+		{% for user in users %}
+			<p>{{ user.username }}</p>
+		{% empty %}
+			<p> No Matching users </p>
+		{% endfor %}
+
+		<h4> Posts </h4>
+		{% for post in posts %}
+			<p>{{ post.title }}</p>
+			<p>{{ post.user.username }}</p>
+		{% empty %}
+			<p> No Matching Posts</p>
+		{% endfor %}
+	{% elif mood == 'tag' %}
+		<h4> Posts with Tags </h4>
+		{% for post in posts %}
+			<p>{{ post.title }}</p>
+			<p>{{ post.user.username }}</p>
+		{% empty %}
+			<p> No Matching Posts</p>
+		{% endfor %}
+	{% endif %}
+</body>
