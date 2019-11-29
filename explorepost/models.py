@@ -69,29 +69,7 @@ class Comments(models.Model):
 			else:
 				td = '1 day ago'
 
-		elif diff_in_sec >= 604800 and diff_in_sec < 2592000:
-			weeks = divmod(diff_in_sec, 604800)[0]
-
-			if weeks > 1:
-				td = '%d weeks ago'%(weeks)
-			else:
-				td = '1 week ago'
-
-
-		elif diff_in_sec >= 2592000 and diff_in_sec < 31536000:
-			months = diff.months
-
-			if months > 1:
-				td = '%d months ago'%(months)
-			else:
-				td = '1 month ago'
-
 		else:
-			years = diff.years
-
-			if years > 1:
-				td = '%d years ago'%(years)
-			else:
-				td = '1 year ago'
+			td = self.added_time.strftime('%d %b, %Y')
 
 		return td

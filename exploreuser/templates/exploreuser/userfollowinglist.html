@@ -34,9 +34,9 @@
 			<div class="col-4">
 				<div class="media">
 					{% if f.photo %}
-					<img src="{{ f.photo.url }}" class="mr-3" width="75" height="75">
+					<img src="{{ f.photo.url }}" class="mr-3" width="50" height="55">
 					{% else %}
-					<img src="{% static 'exploreuser/allprofile.jpeg' %}"  class="mr-3">
+					<img src="{% static 'exploreuser/allprofile.jpeg' %}"  width="50" height="55">
 					{% endif %}
 
 					<div class="media-body">
@@ -48,7 +48,9 @@
 			<div class="col-2">
 				<a href="{% url 'view_profile' f.user.id %}" class="btn btn-info ml-3">View Profile</a>
 			</div>
-			<div class="col-3"></div>
+			<div class="col-3">
+				<a href="{% url 'unfollow_user' f.user.id %}?next={{ request.path }}" class="btn btn-info ml-3">Unfollow</a>
+			</div>
 		</div>
 	{% empty %}
 		<h3 class="text-warning">{{ u.username }} follows no one yet.</h3>

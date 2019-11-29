@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseRedirect
 
 # Create your views here.
 class SignUpView(View):
@@ -105,9 +106,9 @@ def edit_profile(request, pk):
 @login_required(login_url='/users/login')
 def view_profile(request, pk):
 	user = ExUser.objects.get(pk=pk)
-	posts = Post.objects.filter(user__username=user.username)
-	following = user.profile.follows.all().count()
-	followers = user.profile.followers.all().count()
+	posts = Post.objects.filter(user__id=user.id)
+	following = user.profile.follows.all()
+	followers = user.profile.followers.all()
 
 	return render(request, 'exploreuser/viewuserprofile.html', {'u': user, 'userposts': posts, 
 			'following': following, 'followers': followers})
@@ -115,12 +116,24 @@ def view_profile(request, pk):
 
 @login_required(login_url='/users/login')
 def start_following(request, following_id):
+	redirect_to = request.GET.get('next', reverse('view_profile', kwargs={'pk': request.user.id}))
 	follwer = Profile.objects.get(user__id=request.user.id)
 	following = Profile.objects.get(user__id=following_id)
 
 	follwer.follows.add(following)
 
-	return redirect(reverse('view_profile', kwargs={'pk': following.user.id}))
+	return HttpResponseRedirect(redirect_to)
+
+
+@login_required(login_url='/users/login')
+def unfollow_user(request, unfollow_id):
+	redirect_to = request.GET.get('next', reverse('view_profile', kwargs={'pk': request.user.id}))
+	follower = Profile.objects.get(user__id=request.user.id)
+	following = Profile.objects.get(user__id=unfollow_id)
+
+	follower.follows.remove(following)
+
+	return HttpResponseRedirect(redirect_to)
 
 
 @login_required(login_url='/users/login')
@@ -138,3 +151,12 @@ def user_followers(request, pk):
 	followers = u.profile.followers.all()
 
 	return render(request, 'exploreuser/userfollowerslist.html', {'followers': followers, 'u': u})
+
+
+@login_required(login_url='/user/login')
+def user_timeline(request):
+	user = Profile.objects.get(user__id=request.user.id)
+	user_follows = user.follows.values('user_id').all()
+	rec_posts = Post.objects.filter(user__id__in=user_follows).order_by('-timestamp')
+
+	return render(request, 'exploreuser/timeline.html', {'posts': rec_posts})
