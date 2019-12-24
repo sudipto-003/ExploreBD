@@ -35,6 +35,7 @@
         	vertical-align: middle;
         	width: 100%;
         }
+        
     </style>
 {% endblock %}
 
@@ -116,6 +117,30 @@
 				<div class="card wh-bg p-3 my-2">
 					<div class="card-body black-text">
 						<p>{{ post.describtion }}</p>
+					</div>
+				</div>
+				<div class="card bl-bg">
+					<div class="card-header">
+						<h6>Avgerage User rating of this Post is</h6>
+						<h4>{{ avg_rating }}</h4>
+					</div>
+					<div class="card-body">
+						<div class="form-group">
+							{% if user_rating is not None %}
+								<h6>You already rated this post {{ user_rating }}.But you can change your dicision anytime.</h6>
+							{% endif %}
+							<form method="post" action="{% url 'postrate'  post.pk  %}?next={{ request.path }}">
+								{% csrf_token %}
+								<fieldset id="rating">
+									<input type="radio" value="1" name="rating">Disgusting<br>
+									<input type="radio" value="2"  name="rating">Not Helpful<br>
+									<input type="radio" value="3"  name="rating">Not So Informative<br>
+									<input type="radio" value="4"  name="rating">Informative<br>
+									<input type="radio" value="5"  name="rating">Very Helpful<br>
+								</fieldset>
+								<button type="submit"  class="btn btn-info">Rate</button>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>

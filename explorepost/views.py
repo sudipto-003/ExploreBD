@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .models import Post, PostImages, Hashtags, Comments
-from .forms import PostForm, PostImageForm, HashtagField
+from .models import Post, PostImages, Hashtags, Comments, PostRating, PostHit
+from .forms import PostForm, PostImageForm, HashtagField, RatingForm
 from django.forms import modelformset_factory
 from django.contrib import messages
+from django.db.models import Avg
 
 # Create your views here.
 
@@ -59,20 +60,47 @@ def view_userpost(request, pk):
 	images = PostImages.objects.filter(post__pk=pk)
 	tags = Hashtags.objects.filter(post__pk=pk)
 	comments = Comments.objects.filter(on_post__pk=pk)
+	try:
+		user_rating = PostRating.objects.get(post__pk=post.pk, user__id=request.user.id)
+	except PostRating.DoesNotExist:
+		user_rating = None
+
+	if user_rating is not None:
+		user_rating = user_rating.rating
+
+	avg_rating_dict = PostRating.objects.filter(post__pk=post.pk).aggregate(Avg('rating'))
+	avg_rating = avg_rating_dict['rating__avg']
+
+	if avg_rating is None:
+		avg_rating = 'Nonoe yet rated this post'
 
 	if request.method == 'POST':
-		comment_text = request.POST['comment']
+		comment_text = request.POST.get('comment', None)
 
-		new_comment = Comments(text=comment_text, on_post=post)
-		new_comment.user = request.user
-		new_comment.save()
+		if comment_text is not None:
+			new_comment = Comments(text=comment_text, on_post=post)
+			new_comment.user = request.user
+			new_comment.save()
 
 		return redirect(reverse('view_userpost', kwargs={'pk': post.id}))
 	
-	return render(request, 'explorepost/view.html', {'post': post, 'images': images, 'tags': tags, 'comments': comments})
+	return render(request, 'explorepost/view.html', {'post': post, 'images': images, 'user_rating': user_rating, 'avg_rating': avg_rating, 'tags': tags, 'comments': comments})
 
 
 	
+@login_required
+def post_rate(request, pk):
+	route = request.GET.get('next', reverse('view_profile', kwargs={'pk': request.user.id }))
+	rated_post = Post.objects.get(pk=pk)
+	
+	if request.method == 'POST':
+		new_rating = request.POST.get('rating', None)
+		if new_rating is not None:
+			PostRating.objects.update_or_create(post=rated_post, user=request.user, defaults={'rating': new_rating},)
+
+	return redirect(route)
+
+
 
 
 		

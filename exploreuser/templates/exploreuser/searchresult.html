@@ -1,31 +1,108 @@
-<html>
-<head>
-	<title>Search Reult</title>
-</head>
+{% extends 'exploreuser/base.html' %}
 
-<body>
-	{% if mood == 'general' %}
-		<h4> Users </h4>
-		{% for user in users %}
-			<p>{{ user.username }}</p>
-		{% empty %}
-			<p> No Matching users </p>
-		{% endfor %}
+{% block title %}
+	<title>Search Result</title>
+{% endblock %}
 
-		<h4> Posts </h4>
+{% block content %}
+{% include 'exploreuser/component/navbar.html' %}
+<div class="container-fluid">
+	<div class="card bl-bg">
+		<div class="card-header">
+			<h4>Search Result</h4>
+		</div>
+	</div>
+	{% if mood == 'tag' %}
 		{% for post in posts %}
-			<p>{{ post.title }}</p>
-			<p>{{ post.user.username }}</p>
+			<div class="card bl-bg py-1">
+				<div class="media">
+					{% if post.user.profile.photo %}
+						<img src="{{ post.user.profile.photo.url }}" class="mr-3" width="100" height="100">
+					{% else %}
+						{% load static %}
+						<img src="{% static 'exploreuser/allprofile.jpeg' %}" class="mr-3" width="100" height="100">
+					{% endif %}
+
+					<div class="media-body">
+						<h6 class="link-text">
+						{% for tag in post.hashtags_set.all %}
+							#{{ tag.tag }}
+						{% endfor %}
+						</h6>
+
+						<a class="white-text" href="{% url 'view_userpost' post.id %}"><h4>{{ post.title }}</h4></a>
+						<p>@{{ post.user.username }}</p>
+
+					</div>
+				</div>
+			</div>
 		{% empty %}
-			<p> No Matching Posts</p>
+			<h6> No match found </h6>
 		{% endfor %}
-	{% elif mood == 'tag' %}
-		<h4> Posts with Tags </h4>
-		{% for post in posts %}
-			<p>{{ post.title }}</p>
-			<p>{{ post.user.username }}</p>
-		{% empty %}
-			<p> No Matching Posts</p>
-		{% endfor %}
+	{% else %}
+	<div class="row">
+		<div class="col-6">
+			<div class="card bl-bg">
+				<div class="card-header">
+					<h4>Users</h4>
+				</div>
+			</div>
+			{% for user in users %}
+				<div class="card abc">
+					<div class="media">
+					{% if user.profile.photo %}
+						<img src="{{ user.profile.photo.url }}" class="mr-3" width="100" height="100">
+					{% else %}
+						{% load static %}
+						<img src="{% static 'exploreuser/allprofile.jpeg' %}" class="mr-3" width="100" height="100">
+					{% endif %}
+
+						<div class="media-body">
+
+							<a href="{% url 'view_profile' user.id %}" class="white-text"><h3>{{ user.username }}</h3></a>
+							<h6>{{ user.profile.address }}</h6>	
+						</div>
+					</div>
+				</div>
+			{% empty %}
+				<h6>No match found</h6>
+			{% endfor %}
+		</div>
+
+		<div class="col-6">
+			<div class="card bl-bg">
+				<div class="card-header">
+					<h3>Matching Posts</h3>
+				</div>
+			</div>
+			{% for post in posts %}
+			<div class="card abc">
+				<div class="media">
+					{% if post.user.profile.photo %}
+						<img src="{{ post.user.profile.photo.url }}" class="mr-3" width="100" height="100">
+					{% else %}
+						{% load static %}
+						<img src="{% static 'exploreuser/allprofile.jpeg' %}" class="mr-3" width="100" height="100">
+					{% endif %}
+
+					<div class="media-body">
+						<h6 class="link-text">
+						{% for tag in post.hashtags_set.all %}
+							#{{ tag.tag }}
+						{% endfor %}
+						</h6>
+
+						<a href="{% url 'view_userpost' post.id %}" class="white-text"><h5>{{ post.title }}</h5></a>
+						<p>@{{ post.user.username }}</p>
+					</div>
+				</div>
+			</div>
+			{% empty %}
+			<h6> No posts found </h6>
+			{% endfor %}
+		</div>
+
+	</div>
 	{% endif %}
-</body>
+</div>
+{% endblock %}

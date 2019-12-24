@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, PostImages, Hashtags
+from .models import Post, PostImages, Hashtags, PostRating
 
 
 class PostForm(forms.ModelForm):
@@ -45,3 +45,11 @@ class HashtagField(forms.ModelForm):
 				}
 			),
 		}
+
+
+class RatingForm(forms.ModelForm):
+
+	class Meta:
+		model = PostRating
+		fields = ['rating', ]
+		

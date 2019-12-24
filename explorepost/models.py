@@ -73,3 +73,16 @@ class Comments(models.Model):
 			td = self.added_time.strftime('%d %b, %Y')
 
 		return td
+
+
+class PostRating(models.Model):
+	post = models.ForeignKey(Post, on_delete=models.CASCADE)
+	user = models.ForeignKey(ExUser, on_delete=models.CASCADE)
+	rating = models.IntegerField(null=True)
+		
+
+class PostHit(models.Model):
+	max_permitted_hit = 20
+	post = models.ForeignKey(Post, on_delete=models.CASCADE)
+	hits = models.IntegerField(default=0)
+	user = models.ForeignKey(ExUser, on_delete=models.CASCADE)

@@ -1,9 +1,33 @@
 <div class="abc">
-	<h1 class="display-4 white-text">Hello, {{ user.username }}</h1>
+	<h1 class="display-4 white-text">Welcome {{ user.username }}</h1>
 	<p class="lead white-text">Explore BD is a common place for travelers from Bangladesh. Share your travelling experience with others, promote places that you like to share with peoples all over the country, make your tour plan and help others to make their, find new destinations to explore and many more.</p>
 	<hr class="my-4">
-	<p class="text-right white-text">View your Profile <a class="btn btn-primary" href="{% url 'view_profile' user.id %}" role="button">View Profile</a> here.</p>
-	<p class="text-right white-text">Share new experience <a class="btn btn-success" href="{% url 'create_post' %}" role="button">Make Post</a> here.</p>
+	<div class="card-deck mx-2">
+		<div class="card border-light mb-3 abc">
+			<div class="card-body white-text">
+				<p class="white-text">People around you is exporing new things, that's great! See what they explored and shared..</p>
+			</div>
+			<div class="card-footer">
+			<a href="{% url 'user_timeline' %}" class="btn btn-success">Visit Timeline</a>
+			</div>	
+		</div>
+		<div class="card border-light mb-3 abc">
+			<div class="card-body white-text">
+				<p class="white-text">Share your experience, your followers are waiting to hear from you.</p>
+			</div>
+			<div class="card-footer">
+				<a href="{% url 'create_post' %}" class="btn btn-info">Make New Post</a>
+			</div>	
+		</div>
+		<div class="card border-light mb-3 abc">
+			<div class="card-body white-text">
+				<p class="white-text">New places are like treasures to the explorers. See trending places, foods and many more around you</p>
+			</div>
+			<div class="card-footer">
+				<a href="#" class="btn btn-success">Trending</a>
+			</div>	
+		</div>
+	</div>
 	<div class="alert alert-info">
 		<h3 class="text-center">Happy Exploring</h3>
 	</div>
