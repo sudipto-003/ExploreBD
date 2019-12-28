@@ -11,6 +11,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.db.models import Q
+from django.db.models.functions import ExtractMonth, ExtractYear
+from django.db.models import Count
 
 # Create your views here.
 class SignUpView(View):
@@ -154,13 +156,36 @@ def user_followers(request, pk):
 	return render(request, 'exploreuser/userfollowerslist.html', {'followers': followers, 'u': u})
 
 
+
 @login_required(login_url='/user/login')
-def user_timeline(request):
+def user_timeline(request, pk):
+	month_name = {
+		1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug', 9 : 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'
+	}
+	user = ExUser.objects.get(pk=pk)
+	user_posts = Post.objects.filter(user__id=user.id)
+	month_year = user_posts.annotate(month=ExtractMonth('timestamp'), year=ExtractYear('timestamp')).values('month', 
+		'year').distinct().order_by('-month')
+
+	total_posts = user_posts.count()
+	a = []
+	for f in month_year:
+		a.append((month_name[f['month']]+" "+str(f['year']), user_posts.filter(timestamp__month=f['month'], timestamp__year=f['year'])))
+
+	print(month_year, total_posts)
+
+	return render(request, 'exploreuser/timeline.html', {'l': a, 'u': user, 'total_posts': total_posts})
+
+
+
+
+@login_required(login_url='/user/login')
+def user_story(request):
 	user = Profile.objects.get(user__id=request.user.id)
 	user_follows = user.follows.values('user_id').all()
 	rec_posts = Post.objects.filter(user__id__in=user_follows).order_by('-timestamp')
 
-	return render(request, 'exploreuser/timeline.html', {'posts': rec_posts})
+	return render(request, 'exploreuser/newsfeed.html', {'posts': rec_posts})
 
 
 def search(request):

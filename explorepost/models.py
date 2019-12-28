@@ -33,7 +33,7 @@ class Comments(models.Model):
 	user = models.ForeignKey(ExUser, on_delete=models.CASCADE)
 	text = models.CharField(max_length=200)
 	on_post = models.ForeignKey(Post, on_delete=models.CASCADE)
-	added_time = models.DateTimeField(auto_now=True)
+	added_time = models.DateTimeField(auto_now_add=True)
 	
 	class Meta:
 		ordering = ['added_time']
@@ -86,3 +86,4 @@ class PostHit(models.Model):
 	post = models.ForeignKey(Post, on_delete=models.CASCADE)
 	hits = models.IntegerField(default=0)
 	user = models.ForeignKey(ExUser, on_delete=models.CASCADE)
+	last_viewed = models.DateTimeField(auto_now=True)

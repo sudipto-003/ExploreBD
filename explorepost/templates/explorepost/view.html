@@ -70,6 +70,7 @@
 						</h6>
 						<h3 class="card-title">{{ post.title }}</h3>
 						<h6 class="card-text text-right">{{ post.timestamp }}</h6>
+						<h6 class="card-text text-left">{{ views }} views</h6>
 					</div>
 				</div>
 			<!--
@@ -177,4 +178,30 @@
 		</div>
 	</div>
 </div>
+{% endblock %}
+
+{% block script %}
+<script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+<script type="text/javascript">
+function hitcount(){
+	$.ajax({
+		url: '{% url "post_hit" %}',
+		data: {
+			'user': '{{ request.user.id }}',
+			'post': '{{ post.id }}',
+		},
+		datatype: 'json',
+		success : function(data){
+			window.location = data.redirect_url;
+		}
+	});
+}
+
+$(document).ready(function(){
+	setInterval(hitcount, 30000);
+});
+</script>
 {% endblock %}

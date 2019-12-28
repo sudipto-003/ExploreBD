@@ -1,53 +1,82 @@
 {% extends 'exploreuser/base.html' %}
 {% load static %}
+
 {% block title %}
-<title>
-	{{u.username}}:Timeline
-</title>
+<title>{{ user.username }}:Timeline</title>
 <style type="text/css">
 	.white-text{
 		color: rgb(255, 255, 255, 1);
 	}
-	.cont-col{
-		color: rgb(0, 64, 255, 1);
-	}
-	.bl-bg-dark{
-		background-color: rgb(0, 0, 0, 1);
-	}
-	.bl-bg-lt{
-		background-color: rgb(51, 51, 255, 1);
-	}
-	.wht-bg{
-		background-color: rgb(255, 255, 255, 1);
+	.black-text{
+		color: rgb(0, 0, 0, 1);
 	}
 	
 </style>
 {% endblock %}
 
+
 {% block content %}
-<div class="container-fluid bl-bg-dark">
-	<div class="row my-2 mx-3 px-2">
-		<div class="col-12">
-			<div class="card">
-				<div class="card-header bl-bg-dark white-text">
-			    	Recent Posts From Users
-			  	</div>
-				<div class="card-body">
-				    {% for post in posts %}
-				    	<div class="card bl-bg">
-				    		<div class="card-body">
-				    			<h5 class="card-title">{{ post.title }}</h5>
-				    			<p class="card-text">{{ post.describtion|truncatewords:20 }}</p>
-				    			<h6 class="card-text">{{ post.timestamp }}</h6>
-				    			<a href="{% url 'view_userpost' post.id %}" class="btn btn-success">View Post</a>
-				    		</div>
-				    	</div>
-				    {% empty %}
-				    	<h2>No posts yet</h2>
-				    {% endfor %}
+{% include 'exploreuser/component/navbar.html' %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-4">
+			<div class="media ml-5 pl-2 py-2">
+				{% if u.profile.photo %}
+					<img src="{{ u.profile.photo.url }}" class="mr-3" width="65" height="65">
+				{% else %}
+					<img src="{% static 'exploreuser/allprofile.jpeg' %}" class="mr-3" width="65" height="65">
+				{% endif %}
+				<div class="media-body">
+					<h4 class="mt-0">{{ u.full_name }}</h4>
+					<a href="{% url 'view_profile' u.id %}"><h5 class="mt-0">@{{ u.username }}</h5></a>
 				</div>
-			</div>			
+			</div>
+			<div class="ml-5 pl-2 py-2">
+				{% if user.id != u.id %}
+					{% if user.profile in u.profile.followers.all %}
+						<a href="{% url 'unfollow_user' u.id %}?next={{ request.path }}" class="btn btn-info ml-3">Unfollow</a>
+					{% else %}
+						<a href="{% url 'start_following' u.id %}?next={{ request.path }}" class="btn btn-info ml-3">Follow</a>
+					{% endif %}
+				{% else %}
+					<a href="{% url 'create_post' %}" class="btn btn-primary">Make New Post</a>
+				{% endif %}
+			</div>
+		</div>
+		<div class="col-8">
+			<div class="alert alert-dark text-center" role="alert">
+				{{ u.username }} has posted {{ total_posts }} times since {{ u.date_joined | date:"M y" }} 
+			</div>
+			<div>
+			{% for i in l %}
+				<div class="card border-success p-2 m-1">
+					<div class="card-header black-text">
+						From {{ i.0 }}
+					</div>
+					<div class="card-body">
+						{% for post in i.1 %}
+							<div class="card bg-dark m-1">
+								<div class="card-body">
+									<a href="{% url 'view_userpost' post.pk %}"><h5 class="card-title">{{ post.title }}</h5></a>
+									<p class="card-text">{{ post.describtion|truncatewords:30 }}</p>
+									<div class="row">
+										<div class="col-6">
+											<p class="card-text text-left">{{ post.timestamp | date:"d M g:i a" }}</p>
+										</div>
+										<div class="col-6">
+											<p class="card-text text-right">{{ post.comments_set.all.count }} Comments</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+			{% endfor %}
+			</div>
 		</div>
 	</div>
 </div>
+
 {% endblock %}

@@ -5,18 +5,18 @@
 	<div class="card-deck mx-2">
 		<div class="card border-light mb-3 abc">
 			<div class="card-body white-text">
-				<p class="white-text">People around you is exporing new things, that's great! See what they explored and shared..</p>
+				<p class="white-text">See your activities in timeline view, make new post and many more..</p>
 			</div>
 			<div class="card-footer">
-			<a href="{% url 'user_timeline' %}" class="btn btn-success">Visit Timeline</a>
+			<a href="{% url 'user_timeline' user.id %}" class="btn btn-success">Visit Timeline</a>
 			</div>	
 		</div>
 		<div class="card border-light mb-3 abc">
 			<div class="card-body white-text">
-				<p class="white-text">Share your experience, your followers are waiting to hear from you.</p>
+				<p class="white-text">News feed, watch what people around you is doing and sharing.. </p>
 			</div>
 			<div class="card-footer">
-				<a href="{% url 'create_post' %}" class="btn btn-info">Make New Post</a>
+				<a href="{% url 'news_feed' %}" class="btn btn-info">News Feed</a>
 			</div>	
 		</div>
 		<div class="card border-light mb-3 abc">
