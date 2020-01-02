@@ -64,7 +64,7 @@
                         {% endfor %}
 
                         <div class="col-2">
-                        <button type="button" class="btn btn-success btn-sm" value="Add More" id="add_more">Add More Images</button>
+                        <button type="button" class="btn btn-dark" value="Add More" id="add_more"><img src="{% static 'exploreuser/add.png' %}" width="25" height="25"></button>
                             <script type="text/javascript">
                                 $('#add_more').click(function(){
                                     cloneMore('div.p:last', 'form');

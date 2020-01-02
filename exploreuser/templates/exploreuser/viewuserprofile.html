@@ -44,15 +44,22 @@
 				
 				<div class="card-body">
 				    <h5 class="card-title white-text">@{{ u.username }}</h5>
-				    {% if user.id == u.id %}
-				    <a href="{% url 'edit_profile' user.id %}" class="btn btn-success">Edit Profile</a>
-				    {% else %}
-				    	{% if user.profile in followers %}
-				    		<a href="{% url 'unfollow_user' u.id %}?next={{ request.path }}" class="btn btn-success">Unfollow</a>
-				    	{% else %}
-				    		<a href="{% url 'start_following' u.id %}?next={{  request.path }}" class="btn btn-success">Follow</a>
-				    	{% endif %}
-				    {% endif %}
+					    <div class="row">
+					    	<div class="col-4 mr-auto">
+							    {% if user.id == u.id %}
+							    <a href="{% url 'edit_profile' user.id %}" class="btn btn-success">Edit Profile</a>
+							    {% else %}
+							    	{% if user.profile in followers %}
+							    		<a href="{% url 'unfollow_user' u.id %}?next={{ request.path }}" class="btn btn-success">Unfollow</a>
+							    	{% else %}
+							    		<a href="{% url 'start_following' u.id %}?next={{  request.path }}" class="btn btn-success">Follow</a>
+							    	{% endif %}
+							    {% endif %}
+							</div>
+							<div class="col-4 ml-auto">
+								<a href="{% url 'user_timeline' u.id %}" class="btn btn-info">View Timeline</a>
+							</div>
+						</div>
 				    
 					<div class="row">
 						<div class="col-4 mr-auto">	
@@ -122,29 +129,6 @@
 		</div>
 	</div>
 
-	<div class="row my-2 mx-3 px-2">
-		<div class="col-12">
-			<div class="card bl-bg">
-				<div class="card-header bl-bg">
-			    	Posts
-			  	</div>
-				<div class="card-body">
-				    {% for post in userposts %}
-				    	<div class="card bl-bg">
-				    		<div class="card-body">
-				    			<h5 class="card-title">{{ post.title }}</h5>
-				    			<p class="card-text">{{ post.describtion|truncatewords:20 }}</p>
-				    			<h6 class="card-text">{{ post.timestamp }}</h6>
-				    			<a href="{% url 'view_userpost' post.id %}" class="btn btn-success">View Post</a>
-				    		</div>
-				    	</div>
-				    {% empty %}
-				    	<h2>No posts yet</h2>
-				    {% endfor %}
-				</div>
-			</div>			
-		</div>
-	</div>
 
 </div>
 {% endblock %}

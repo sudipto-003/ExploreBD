@@ -117,6 +117,7 @@ def post_hit(request):
 	time_now = datetime.now(timezone.utc)
 
 	if post.user.id != user.id:
+		new = False
 
 		try:
 			user_post_hit = PostHit.objects.get(user=user, post=post)
@@ -129,7 +130,7 @@ def post_hit(request):
 			diff_sec = diff.total_seconds()
 			diff_hour = divmod(diff_sec, 3600)[0]
 
-			if diff_hour > 6:
+			if diff_hour > 3 or num_of_hits == 0:
 				user_post_hit.hits = num_of_hits+1
 				user_post_hit.save()
 		else:

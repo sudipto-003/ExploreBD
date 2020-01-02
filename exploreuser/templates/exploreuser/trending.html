@@ -31,7 +31,7 @@
 		<div class="col-12">
 			<div class="card bg-secondary">
 				<div class="card-header white-text">
-			    	Recent Posts From Users
+			    	Top trending posts
 			  	</div>
 				<div class="card-body">
 				    {% for post in posts %}
@@ -39,26 +39,24 @@
 				    		<div class="card-body">
 				    			<div class=row>
 				    				<div class="col-2">
-				    					{% if post.0.user.profile.photo %}
-				    						<img src="{{ post.0.user.profile.photo.url }}" width="75" height="75">
+				    					{% if post.user.profile.photo %}
+				    						<img src="{{ post.user.profile.photo.url }}" width="75" height="75">
 				    					{% else %}
 				    						{% load static %}
 				    						<img src="{% static 'exploreuser/allprofile.jpeg' %}" width="75" height="75">
 				    					{% endif %}
 				    					<br>
-				    					<a href="{% url 'view_profile' post.0.user.id %}">@{{ post.0.user.username }}</a>
+				    					<a href="{% url 'view_profile' post.user.id %}">@{{ post.user.username }}</a>
 				    				</div>
 				    				<div class="col-10">
-						    			<a href="{% url 'view_userpost' post.0.id %}"><h5 class="card-title">{{ post.0.title }}</h5></a>
-						    			<p class="card-text">{{ post.0.describtion|truncatewords:20 }}</p>
+						    			<a href="{% url 'view_userpost' post.id %}"><h5 class="card-title">{{ post.title }}</h5></a>
+						    			<p class="card-text">{{ post.describtion|truncatewords:20 }}</p>
 						    			<div class="row">
 						    				<div class="col-6">
-						    					<h6 class="card-text">{{ post.0.timestamp|date:"d M, y" }}</h6>
-						    					<p class="card-text">{{ post.1 }} views</p>
+						    					<h6 class="card-text">{{ post.timestamp|date:"d M, Y" }}</h6>
 						    				</div>
 						    				<div class="col-6">
-						    					<p class="card-text">{{ post.2 }} average rating</p>
-						    					<p class="card-text">{{ post.0.comments_set.all.count }} comments </p>
+						    					<p class="card-text">{{ post.comments_set.all.count }} comments </p>
 						    				</div>
 						    			</div>
 						    		</div>

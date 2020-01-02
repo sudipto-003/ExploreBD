@@ -46,7 +46,11 @@ class Profile(models.Model):
 		
 			if pre is None or self.photo.name != pre.photo.name:
 				img = Image.open(self.photo)
-				img = img.resize((350, 350), Image.ANTIALIAS)
+				size = img.size
+
+				ratio = min(512/size[0], 512/size[1])
+
+				img = img.resize((int(size[0]*ratio), int(size[1]*ratio)), Image.ANTIALIAS)
 				output = BytesIO()
 
 				img.save(output, format='JPEG', quality=90)

@@ -20,7 +20,7 @@
 
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-4">
+		<div class="col-3">
 			<div class="media ml-5 pl-2 py-2">
 				{% if u.profile.photo %}
 					<img src="{{ u.profile.photo.url }}" class="mr-3" width="65" height="65">
@@ -44,15 +44,15 @@
 				{% endif %}
 			</div>
 		</div>
-		<div class="col-8">
+		<div class="col-9">
 			<div class="alert alert-dark text-center" role="alert">
 				{{ u.username }} has posted {{ total_posts }} times since {{ u.date_joined | date:"M y" }} 
 			</div>
 			<div>
 			{% for i in l %}
-				<div class="card border-success p-2 m-1">
-					<div class="card-header black-text">
-						From {{ i.0 }}
+				<div class="card bg-secondary p-2 m-1">
+					<div class="card-header">
+						<b>From {{ i.0 }}</b>
 					</div>
 					<div class="card-body">
 						{% for post in i.1 %}

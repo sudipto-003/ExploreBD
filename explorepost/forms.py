@@ -33,18 +33,11 @@ class PostImageForm(forms.ModelForm):
 		}
 
 
-class HashtagField(forms.ModelForm):
-
-	class Meta:
-		model = Hashtags
-		fields = ['tag', ]
-		widgets = {
-			'tag' : forms.TextInput(
-				attrs={
-					'class' : 'form-control'
-				}
-			),
-		}
+class HashtagField(forms.Form):
+	tag = forms.CharField(max_length=200, required=False, widget=forms.TextInput(
+		attrs={
+			'class': 'form-control'
+		}))
 
 
 class RatingForm(forms.ModelForm):

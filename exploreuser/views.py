@@ -3,16 +3,17 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import View
 from .forms import *
 from .models import ExUser, Profile
-from explorepost.models import Post, Hashtags
+from explorepost.models import Post, Hashtags, PostHit, PostRating
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
-from django.db.models import Q
+from django.db.models import Q, F
 from django.db.models.functions import ExtractMonth, ExtractYear
-from django.db.models import Count
+from django.db.models import Count, Sum, Avg, Case, When
+from datetime import datetime, timezone
 
 # Create your views here.
 class SignUpView(View):
@@ -172,7 +173,6 @@ def user_timeline(request, pk):
 	for f in month_year:
 		a.append((month_name[f['month']]+" "+str(f['year']), user_posts.filter(timestamp__month=f['month'], timestamp__year=f['year'])))
 
-	print(month_year, total_posts)
 
 	return render(request, 'exploreuser/timeline.html', {'l': a, 'u': user, 'total_posts': total_posts})
 
@@ -184,8 +184,16 @@ def user_story(request):
 	user = Profile.objects.get(user__id=request.user.id)
 	user_follows = user.follows.values('user_id').all()
 	rec_posts = Post.objects.filter(user__id__in=user_follows).order_by('-timestamp')
+	filtered_posts = []
 
-	return render(request, 'exploreuser/newsfeed.html', {'posts': rec_posts})
+	for posti in rec_posts:
+		post_view = PostHit.objects.filter(post__id=posti.id).aggregate(Sum('hits'))
+		number_of_views = post_view['hits__sum']
+		avg_rating_dict = PostRating.objects.filter(post__id=posti.id).aggregate(Avg('rating'))
+		avg_rating = avg_rating_dict['rating__avg']
+		filtered_posts.append((posti, number_of_views, avg_rating))
+
+	return render(request, 'exploreuser/newsfeed.html', {'posts': filtered_posts})
 
 
 def search(request):
@@ -220,3 +228,31 @@ def search(request):
 
 	return render(request, 'exploreuser/searchresult.html', {'users': users, 'posts': posts, 'mood': mood})
 
+
+
+def find_trending(request):
+	now = datetime.now(timezone.utc)
+
+	most_hited_post = PostHit.objects.values('post').annotate(total_views=Sum('hits')).order_by('-total_views')
+
+	post_filtered = [(d['post'], d['total_views']) for d in most_hited_post if d['total_views'] != 0]
+	post_ids = [i[0] for i in post_filtered]
+	'''
+	posts = Post.objects.filter(pk__in=post_ids).annotate(diff=(now - F('timestamp'))).values('id', 'diff')
+	timediff = [divmod(i['diff'].total_seconds(), 3600)[0] for i in posts]
+
+	ratio = []
+	for i in range(0, len(post_ids)):
+		if timediff[i] == 0:
+			timediff[i] = 1
+
+		ratio.append(post_filtered[i][1]/timediff[i])
+
+	id_sync = [x for _, x in sorted(zip(ratio, post_ids), key=lambda pair: pair[0], reverse=True)]
+	'''
+	preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(post_ids)])
+	top_trending = Post.objects.filter(id__in=post_ids).order_by(preserved, 'timestamp')
+	
+
+
+	return render(request, 'exploreuser/trending.html', {'posts': top_trending})
