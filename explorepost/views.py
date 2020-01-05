@@ -12,7 +12,7 @@ from django.http import JsonResponse
 
 # Create your views here.
 
-@login_required(login_url='/users/login')
+@login_required(login_url='/login')
 def create_post(request):
 	ImageFormSet = modelformset_factory(PostImages, form=PostImageForm, extra=3)
 
@@ -57,7 +57,24 @@ def create_post(request):
 	return render(request, 'explorepost/post.html', {'postform': postform, 'formset': formset, 'hashtags': hashtags})
 
 
-@login_required(login_url='/users/login')
+@login_required(login_url='/login')
+def delete_post(request, post_id):
+	try:
+		post = Post.objects.get(id=post_id)
+		if post.user == request.user:
+			post.delete()
+			messages.success(request, "Post deleted successfully")
+			return redirect(reverse('user_timeline', kwargs={'pk': post.user.id}))
+		else:
+			messages.error(request, "You are not the owner of the post")
+			return redirect(reverse('user_timeline', kwargs={'pk': request.user.id}))
+	except Post.DoesNotExist:
+		messages.error(request, "No such post exists")
+		return redirect(reverse('user_timeline', kwargs={'pk': request.user.id}))
+
+
+
+@login_required(login_url='/login')
 def view_userpost(request, pk):
 	post = Post.objects.get(pk=pk)
 	images = PostImages.objects.filter(post__pk=pk)
@@ -95,7 +112,7 @@ def view_userpost(request, pk):
 
 
 	
-@login_required(login_url='/users/login')
+@login_required(login_url='/login')
 def post_rate(request, pk):
 	route = request.GET.get('next', reverse('view_profile', kwargs={'pk': request.user.id }))
 	rated_post = Post.objects.get(pk=pk)
@@ -108,7 +125,7 @@ def post_rate(request, pk):
 	return redirect(route)
 
 
-@login_required(login_url='/users/login')
+@login_required(login_url='/login')
 def post_hit(request):
 	user_id = request.GET.get('user', None)
 	post_id = request.GET.get('post', None)

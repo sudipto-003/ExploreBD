@@ -64,7 +64,8 @@ class LoginView(View):
 
 		if user is not None:
 			login(request, user)
-			return redirect('home')
+			redirect_to = request.GET.get('next', reverse('home'))
+			return redirect(redirect_to)
 
 		else:
 			messages.error(request, 'Invalid username or password')
@@ -86,7 +87,7 @@ class LogoutView(View):
 		return redirect('home') 
 
 
-@login_required(login_url='/users/login')
+@login_required(login_url='/login')
 def edit_profile(request, pk):
 	user = ExUser.objects.get(pk=pk)
 
@@ -107,7 +108,7 @@ def edit_profile(request, pk):
 		raise PermissionDenied
 
 
-@login_required(login_url='/users/login')
+@login_required(login_url='/login')
 def view_profile(request, pk):
 	user = ExUser.objects.get(pk=pk)
 	posts = Post.objects.filter(user__id=user.id)
@@ -118,7 +119,7 @@ def view_profile(request, pk):
 			'following': following, 'followers': followers})
 
 
-@login_required(login_url='/users/login')
+@login_required(login_url='/login')
 def start_following(request, following_id):
 	redirect_to = request.GET.get('next', reverse('view_profile', kwargs={'pk': request.user.id}))
 	follwer = Profile.objects.get(user__id=request.user.id)
@@ -129,7 +130,7 @@ def start_following(request, following_id):
 	return HttpResponseRedirect(redirect_to)
 
 
-@login_required(login_url='/users/login')
+@login_required(login_url='/login')
 def unfollow_user(request, unfollow_id):
 	redirect_to = request.GET.get('next', reverse('view_profile', kwargs={'pk': request.user.id}))
 	follower = Profile.objects.get(user__id=request.user.id)
@@ -140,7 +141,7 @@ def unfollow_user(request, unfollow_id):
 	return HttpResponseRedirect(redirect_to)
 
 
-@login_required(login_url='/users/login')
+@login_required(login_url='/login')
 def user_following(request, pk):
 	u = ExUser.objects.get(pk=pk)
 	following = u.profile.follows.all()
@@ -149,7 +150,7 @@ def user_following(request, pk):
 
 
 
-@login_required(login_url='/users/login')
+@login_required(login_url='/login')
 def user_followers(request, pk):
 	u = ExUser.objects.get(pk=pk)
 	followers = u.profile.followers.all()
@@ -158,7 +159,7 @@ def user_followers(request, pk):
 
 
 
-@login_required(login_url='/user/login')
+@login_required(login_url='/login')
 def user_timeline(request, pk):
 	month_name = {
 		1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug', 9 : 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'
@@ -179,7 +180,7 @@ def user_timeline(request, pk):
 
 
 
-@login_required(login_url='/user/login')
+@login_required(login_url='/login')
 def user_story(request):
 	user = Profile.objects.get(user__id=request.user.id)
 	user_follows = user.follows.values('user_id').all()

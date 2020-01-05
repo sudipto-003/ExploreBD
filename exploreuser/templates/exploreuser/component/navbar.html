@@ -33,10 +33,4 @@
     
 </nav>
 
-{% if messages %}
-  {% for msg in messages %}
-    <div class="alert alert-danger" role="alert">
-      {{ msg|safe }}
-    </div>
-  {% endfor %}
-{% endif %}
+{% include 'explorepost/messages.html' %}
