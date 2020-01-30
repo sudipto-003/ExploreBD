@@ -235,10 +235,9 @@ def find_trending(request):
 	now = datetime.now(timezone.utc)
 
 	most_hited_post = PostHit.objects.values('post').annotate(total_views=Sum('hits')).order_by('-total_views')
-
 	post_filtered = [(d['post'], d['total_views']) for d in most_hited_post if d['total_views'] != 0]
 	post_ids = [i[0] for i in post_filtered]
-	'''
+	
 	posts = Post.objects.filter(pk__in=post_ids).annotate(diff=(now - F('timestamp'))).values('id', 'diff')
 	timediff = [divmod(i['diff'].total_seconds(), 3600)[0] for i in posts]
 
@@ -250,10 +249,8 @@ def find_trending(request):
 		ratio.append(post_filtered[i][1]/timediff[i])
 
 	id_sync = [x for _, x in sorted(zip(ratio, post_ids), key=lambda pair: pair[0], reverse=True)]
-	'''
-	preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(post_ids)])
-	top_trending = Post.objects.filter(id__in=post_ids).order_by(preserved, 'timestamp')
 	
-
+	preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(id_sync)])
+	top_trending = Post.objects.filter(id__in=post_ids).order_by(preserved)
 
 	return render(request, 'exploreuser/trending.html', {'posts': top_trending})
